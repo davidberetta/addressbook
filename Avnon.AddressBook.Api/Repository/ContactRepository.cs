@@ -4,6 +4,7 @@ using System.Linq;
 using Avnon.AddressBook.Api.Model;
 using Avnon.AddressBook.Api.Repository.Interfaces;
 using Dapper;
+using System.Threading.Tasks;
 
 namespace Avnon.AddressBook.Api.Repository
 {
@@ -15,32 +16,19 @@ namespace Avnon.AddressBook.Api.Repository
         {
             _conn = conn;
         }
-        
-        public async IEnumerable<Contact> GetAllContacts()
-        {
-            var sql = @"";
 
-            var contacts = await _conn.QueryAsync<Contact, Tag, Contact>(sql, (contact, tag) =>
+        public async Task<IEnumerable<Contact>> FindContactsAsync(string searchText)
+        {
+            var sp = @"CONTACTS_FIND_P";
+
+            var contacts = await _conn.QueryAsync<Contact, Tag, Contact>(sp, (contact, tag) =>
             {
                 contact.Tags = contact.Tags ?? new List<Tag>();
                 contact.Tags.Add(tag);
                 return contact;
-            });
-            
-            contacts.R
+            }, splitOn: "TagId", param: new { SearchText = searchText }, commandType: CommandType.StoredProcedure);
 
-        }
-
-        public IEnumerable<Contact> FindContacts(string searchString)
-        {
-            var sql = @"";
-            
-            return _conn.Query<Contact, Tag, Contact>(sql, (contact, tag) =>
-            {
-                contact.Tags = contact.Tags ?? new List<Tag>();
-                contact.Tags.Add(tag);
-                return contact;
-            }).GroupBy(a => a.ContactId).Select(group =>
+            return contacts.GroupBy(a => a.ContactId).Select(group =>
             {
                 var contact = group.First();
                 contact.Tags = group.Select(a => a.Tags.Single()).ToList();
@@ -48,9 +36,21 @@ namespace Avnon.AddressBook.Api.Repository
             });
         }
 
-        public Contact GetContactById(int id)
+        public async Task<Contact> GetContactByIdAsync(int contactId)
         {
-            throw new System.NotImplementedException();
+            var sp = @"CONTACT_GET_BY_ID_P";
+
+            using (var query =
+                await _conn.QueryMultipleAsync(sp, new {ContactId = contactId},
+                    commandType: CommandType.StoredProcedure))
+            {
+                var contact = await query.ReadFirstAsync<Contact>();
+                var tags = await query.ReadAsync<Tag>();
+
+                contact.Tags = tags.ToList();
+
+                return contact;
+            }
         }
     }
 }

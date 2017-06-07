@@ -1,22 +1,19 @@
 using System.Collections.Generic;
 using Avnon.AddressBook.Api.Model;
+using System.Threading.Tasks;
 
 namespace Avnon.AddressBook.Api.Repository.Interfaces
 {
     public interface ITagRepository
     {
-        IEnumerable<Tag> GetAllTags();
+        Task<IEnumerable<Tag>> GetTagsByTitle(string title);
 
-        IEnumerable<Tag> GetTagsByTitle(string title);
+        Task<Tag> GetTagById(int tagId);
 
-        Tag GetTagById(int id);
+        Task<int> AddTag(Tag tag);
 
-        int AddTag(Tag tag);
-
-        void EditTag(Tag tag);
+        Task<int> EditTag(Tag tag);
         
-        void DeleteTag(Tag tag);
-
-
+        Task<int> DeleteTag(int tagId);
     }
 }

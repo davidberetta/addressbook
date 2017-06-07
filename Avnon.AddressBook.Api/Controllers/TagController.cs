@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avnon.AddressBook.Api.Business.Interfaces;
+using Avnon.AddressBook.Api.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Avnon.AddressBook.Api.Controllers
@@ -9,36 +11,56 @@ namespace Avnon.AddressBook.Api.Controllers
     [Route("api/[controller]")]
     public class TagController : Controller
     {
-        // GET api/values
+        private readonly ITagService _tagService;
+
+        public TagController(ITagService tagService)
+        {
+            _tagService = tagService;
+        }
+
+        // GET api/tag?title=Mentor
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get([FromQuery] string title)
         {
-            return new string[] { "value1", "value2" };
+            var result = await _tagService.GetTagsByTitle(title);
+
+            return Ok(result);
         }
 
-        // GET api/values/5
+        // GET api/tag/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var result = await _tagService.GetTagById(id);
+
+            return Ok(result);
         }
 
-        // POST api/values
+        // POST api/tag
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Post([FromBody]Tag tag)
         {
+            await _tagService.EditTag(tag);
+
+            return Ok();
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        // PUT api/tag
+        [HttpPut()]
+        public async Task<IActionResult> Put([FromBody]Tag tag)
         {
+            var result = await _tagService.AddTag(tag);
+
+            return Ok(result);
         }
 
-        // DELETE api/values/5
+        // DELETE api/tag/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            await _tagService.DeleteTag(id);
+
+            return Ok();
         }
     }
 }

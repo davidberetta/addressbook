@@ -1,6 +1,9 @@
 # Autosave files
 *~
 
+# Visual Studio
+*.vs
+
 # Rider IDE
 *.idea
 

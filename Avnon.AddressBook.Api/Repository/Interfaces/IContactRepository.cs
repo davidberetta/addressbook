@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using Avnon.AddressBook.Api.Model;
+using System.Threading.Tasks;
 
 namespace Avnon.AddressBook.Api.Repository.Interfaces
 {
     public interface IContactRepository
     {
-        IEnumerable<Contact> GetAllContacts();
         
-        IEnumerable<Contact> FindContacts(string searchString);
+        Task<IEnumerable<Contact>> FindContactsAsync(string searchText);
 
-        Contact GetContactById(int id);
+        Task<Contact> GetContactByIdAsync(int id);
         
     }
 }

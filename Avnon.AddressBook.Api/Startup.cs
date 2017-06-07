@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Avnon.AddressBook.Api.Business;
+using Avnon.AddressBook.Api.Business.Interfaces;
+using Avnon.AddressBook.Api.Repository;
+using Avnon.AddressBook.Api.Repository.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +35,11 @@ namespace Avnon.AddressBook.Api
         {
             // Add framework services.
             services.AddMvc();
+            services.AddSingleton<IContactService, ContactService>();
+            services.AddSingleton<ITagService, TagService>();
+            services.AddSingleton<IContactRepository, ContactRepository>();
+            services.AddSingleton<ITagRepository, TagRepository>();
+            services.AddSingleton<IDbConnection>(new SqlConnection(Configuration.GetConnectionString("Avnon")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

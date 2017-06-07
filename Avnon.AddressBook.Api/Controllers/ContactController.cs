@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Avnon.AddressBook.Api.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Avnon.AddressBook.Api.Controllers
@@ -9,36 +8,30 @@ namespace Avnon.AddressBook.Api.Controllers
     [Route("api/[controller]")]
     public class ContactController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IContactService _contactService;
+
+        public ContactController(IContactService contactService)
         {
-            return new string[] { "value1", "value2" };
+            _contactService = contactService;
         }
 
-        // GET api/values/5
+        // GET api/contact/dav
+        [HttpGet("")]
+        public async Task<IActionResult> FindContactsAsync([FromQuery] string searchText)
+        {
+            var contacts = (await _contactService.FindAllContactsAsync(searchText ?? string.Empty)).ToList();
+
+            return Ok(contacts);
+        }
+
+        // GET api/contact/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetContactById(int id)
         {
-            return "value";
+            var contact = await _contactService.GetContactByIdAsync(id);
+
+            return Ok(contact);
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
