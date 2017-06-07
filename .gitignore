@@ -1,6 +1,9 @@
 # Autosave files
 *~
 
+# Local Dev Files
+*/*.Development.json
+
 # Visual Studio
 *.vs
 
