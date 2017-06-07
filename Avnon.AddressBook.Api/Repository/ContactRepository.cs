@@ -16,7 +16,22 @@ namespace Avnon.AddressBook.Api.Repository
             _conn = conn;
         }
         
-        public IEnumerable<Contact> GetAllContacts()
+        public async IEnumerable<Contact> GetAllContacts()
+        {
+            var sql = @"";
+
+            var contacts = await _conn.QueryAsync<Contact, Tag, Contact>(sql, (contact, tag) =>
+            {
+                contact.Tags = contact.Tags ?? new List<Tag>();
+                contact.Tags.Add(tag);
+                return contact;
+            });
+            
+            contacts.R
+
+        }
+
+        public IEnumerable<Contact> FindContacts(string searchString)
         {
             var sql = @"";
             
@@ -31,12 +46,6 @@ namespace Avnon.AddressBook.Api.Repository
                 contact.Tags = group.Select(a => a.Tags.Single()).ToList();
                 return contact;
             });
-
-        }
-
-        public IEnumerable<Contact> FindContacts(string searchString)
-        {
-            throw new System.NotImplementedException();
         }
 
         public Contact GetContactById(int id)
