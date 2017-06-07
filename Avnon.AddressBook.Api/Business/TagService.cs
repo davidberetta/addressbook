@@ -1,4 +1,7 @@
-﻿$HEADER$namespace $NAMESPACE$
+namespace Avnon.AddressBook.Api.Business
 {
-  public class $CLASS$ {$END$}
+    public class TagService
+    {
+        
+    }
 }

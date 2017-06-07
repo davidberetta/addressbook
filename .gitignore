@@ -1,6 +1,9 @@
 # Autosave files
 *~
 
+# Rider IDE
+*.idea
+
 # build
 [Oo]bj/
 [Bb]in/
