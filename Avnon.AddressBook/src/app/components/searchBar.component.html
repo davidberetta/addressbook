@@ -1,0 +1,10 @@
+﻿<div id="search-bar">
+  <input #searchBox placeholder="Search by Name, Company or #Tag" class="form-control" id="search-box" (keyup)="search(searchBox.value)" [(ngModel)]="searchText" />
+  <ul *ngIf="showTags" id="search-tags-list" class="dropdown-menu">
+    <li *ngFor="let tag of tags">
+      <a (click)="findByTag(tag)">
+        {{tag.title}}
+      </a>
+    </li>
+  </ul>
+</div>

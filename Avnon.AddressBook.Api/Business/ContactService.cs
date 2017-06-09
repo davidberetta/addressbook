@@ -16,7 +16,19 @@ namespace Avnon.AddressBook.Api.Business
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Contact>> FindAllContactsAsync(string searchText)
+        public async Task<Tag> AddTagToContactAsync(int contactId, Tag tag)
+        {
+            var tagId = await _repository.AddTagToContactAsync(contactId, tag);
+
+            return new Tag(tagId, tag.Title);
+        }
+
+        public async Task RemoveTagFromContactAsync(int contactId, int tagId)
+        {
+            await _repository.RemoveTagFromContactAsync(contactId, tagId);
+        }
+
+        public async Task<IEnumerable<Contact>> FindContactsAsync(string searchText)
         {
             var contacts = await _repository.FindContactsAsync(searchText);
 
@@ -28,6 +40,13 @@ namespace Avnon.AddressBook.Api.Business
             var contact = await _repository.GetContactByIdAsync(id);
 
             return contact;
+        }
+
+        public async Task<IEnumerable<Contact>> GetContactsByTagAsync(int tagId)
+        {
+            var contacts = await _repository.GetContactsByTagAsync(tagId);
+
+            return contacts;
         }
     }
 }

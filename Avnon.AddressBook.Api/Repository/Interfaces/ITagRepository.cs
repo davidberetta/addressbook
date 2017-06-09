@@ -6,14 +6,14 @@ namespace Avnon.AddressBook.Api.Repository.Interfaces
 {
     public interface ITagRepository
     {
-        Task<IEnumerable<Tag>> GetTagsByTitle(string title);
+        Task<IEnumerable<Tag>> GetTagsByTitleAsync(string title);
 
-        Task<Tag> GetTagById(int tagId);
+        Task<Tag> GetTagByIdAsync(int tagId);
 
-        Task<int> AddTag(Tag tag);
+        Task<int> AddTagAsync(string tagTitle);
 
-        Task<int> EditTag(Tag tag);
+        Task EditTagAsync(Tag tag);
         
-        Task<int> DeleteTag(int tagId);
+        Task DeleteTagAsync(int tagId);
     }
 }

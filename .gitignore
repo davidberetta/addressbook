@@ -4,6 +4,9 @@
 # Local Dev Files
 */*.Development.json
 
+# node
+node_modules/
+
 # Visual Studio
 *.vs
 

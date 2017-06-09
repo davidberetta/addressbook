@@ -1,0 +1,34 @@
+﻿<div class="contact-info panel panel-info" *ngIf="isReady">
+  <div class="panel-heading">
+    <h4 class="panel-title">{{contact.firstName}} {{contact.lastName}}</h4>
+  </div>
+  <div class="panel-body">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3"><strong>Phone:</strong></div>
+        <div class="col-md-9">{{contact.phone}}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-3"><strong>Email:</strong></div>
+        <div class="col-md-9">{{contact.email}}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-3"><strong>LinkedIn:</strong></div>
+        <div class="col-md-9">{{contact.linkedIn}}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-3"><strong>Skype:</strong></div>
+        <div class="col-md-9">{{contact.skype}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="contact-info panel panel-info" *ngIf="!isReady">
+  <div class="panel-heading">
+    <h4 class="panel-title">Contact Details</h4>
+  </div>
+  <div class="panel-body">
+    <p>Click on a contact to view their details</p>
+  </div>
+</div>

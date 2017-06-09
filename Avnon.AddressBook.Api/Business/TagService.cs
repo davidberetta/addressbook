@@ -16,37 +16,33 @@ namespace Avnon.AddressBook.Api.Business
             _repository = repository;
         }
 
-        public async Task<Tag> AddTag(Tag tag)
+        public async Task<Tag> AddTagAsync(string tagTitle)
         {
-            var tagId = await _repository.AddTag(tag);
+            var tagId = await _repository.AddTagAsync(tagTitle);
 
-            return new Tag()
-            {
-                TagId = tagId,
-                Title = tag.Title
-            };
+            return new Tag(tagId, tagTitle);
         }
 
-        public async Task DeleteTag(int tagId)
+        public async Task DeleteTagAsync(int tagId)
         {
-            await _repository.DeleteTag(tagId);
+            await _repository.DeleteTagAsync(tagId);
         }
 
-        public async Task EditTag(Tag tag)
+        public async Task EditTagAsync(Tag tag)
         {
-            await _repository.EditTag(tag);
+            await _repository.EditTagAsync(tag);
         }
 
-        public async Task<Tag> GetTagById(int tagId)
+        public async Task<Tag> GetTagByIdAsync(int tagId)
         {
-            var tag = await _repository.GetTagById(tagId);
+            var tag = await _repository.GetTagByIdAsync(tagId);
 
             return tag;
         }
 
-        public async Task<IEnumerable<Tag>> GetTagsByTitle(string title)
+        public async Task<IEnumerable<Tag>> GetTagsByTitleAsync(string title)
         {
-            var tag = await _repository.GetTagsByTitle(title);
+            var tag = await _repository.GetTagsByTitleAsync(title);
 
             return tag;
         }

@@ -1,0 +1,26 @@
+﻿<div id="tag-control" class="btn-group">
+  <button type="button" class="btn btn-default dropdown-toggle" (click)="getTags()">
+    Tags <span class="caret"></span>
+  </button>
+  <div id="tag-control-dropdown" class="dropdown-menu" *ngIf="showDropDown">
+    <div class="tag-list" *ngIf="tagsLoaded">
+      <div id="tag-item" class="tag-item" *ngFor="let tag of tags">
+        <span *ngIf="!tag.editing">
+        <input (change)="tagCheckChange(tag.tagId)" type="checkbox" name="checkbox_{{tag.tagId}}" [(ngModel)]="tag.selected"/>
+          <label for="checkbox_{{tag.tagId}}" id="tagops_label_{{tag.tagId}}">
+            {{tag.title}}
+          </label>
+        </span>
+        <form (submit)="editTag(tag)" id="edit-tag-form" *ngIf="tag.editing"><input class="form-control" name="edit_{{tag.tagId}}" type="text" [(ngModel)]="tag.title"/>
+        </form>
+        <div id="tagops_options_{{tag.tagId}}" class="tag-options">
+          <span id="tagops_editTag_{{tag.tagId}}" (click)="toggleEdit(tag.tagId)" class="glyphicon glyphicon-pencil"></span>
+          <span id="tagops_deleteTag_{{tag.tagId}}" (click)="deleteTag(tag.tagId)" class="glyphicon glyphicon-remove"></span>
+        </div>
+      </div>
+    </div>
+    <form id="new-tag-form" (submit)="addTag(tagTitle.value)">
+      <input #tagTitle name="tagTitle" type="text" class="form-control" placeholder="Add Tag and press Enter" [(ngModel)]="newTagText" autocomplete="off"/>
+    </form>
+  </div>
+</div>

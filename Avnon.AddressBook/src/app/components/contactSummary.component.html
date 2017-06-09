@@ -1,0 +1,20 @@
+﻿<div id="tag-control-wrapper">
+  <tag-control (onTagDeleted)="onTagDeleted($event)" 
+               (onTagEdited)="onTagEdited($event)" 
+               (onTagRemoved)="onTagRemoved($event)" 
+               (onTagAdded)="onTagAdded($event)" 
+               [selectedTags]="contact.tags" [contactId]="contact.contactId"></tag-control>
+</div>
+<div id="contact-summary" class="panel panel-default"  [routerLink]="['/contact', contact.contactId]">
+  <div class="panel-heading">
+    <div >
+        <h3 class="panel-title">{{contact.firstName}} {{contact.lastName}}</h3>
+    </div>
+  </div>
+  <div class="panel-body">
+    <h4>{{contact.jobTitle}} at {{contact.company}}</h4>
+    <div *ngIf="contact.tags.length > 0">
+      <span class="label label-primary" *ngFor="let tag of contact.tags">{{tag.title}}</span>
+    </div>
+  </div>
+</div>

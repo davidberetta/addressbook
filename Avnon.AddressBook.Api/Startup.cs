@@ -8,6 +8,7 @@ using Avnon.AddressBook.Api.Business;
 using Avnon.AddressBook.Api.Business.Interfaces;
 using Avnon.AddressBook.Api.Repository;
 using Avnon.AddressBook.Api.Repository.Interfaces;
+using Microsoft.AspNetCore.Antiforgery.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +36,10 @@ namespace Avnon.AddressBook.Api
         {
             // Add framework services.
             services.AddMvc();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", a => a.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            });
             services.AddSingleton<IContactService, ContactService>();
             services.AddSingleton<ITagService, TagService>();
             services.AddSingleton<IContactRepository, ContactRepository>();

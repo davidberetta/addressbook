@@ -17,35 +17,35 @@ namespace Avnon.AddressBook.Api.Repository
             _conn = conn;
         }
 
-        public async Task<int> AddTag(Tag tag)
+        public async Task<int> AddTagAsync(string tagTitle)
         {
             var sp = "TAG_ADD_P";
 
-            return await _conn.ExecuteAsync(sp, new {Title = tag.Title}, commandType: CommandType.StoredProcedure);
+            return await _conn.QueryFirstAsync<int>(sp, new {Title = tagTitle}, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<int> DeleteTag(int tagId)
+        public async Task DeleteTagAsync(int tagId)
         {
             var sp = "TAG_DELETE_P";
 
-            return await _conn.ExecuteAsync(sp, new {TagId = tagId}, commandType: CommandType.StoredProcedure);
+            await _conn.ExecuteAsync(sp, new {TagId = tagId}, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<int> EditTag(Tag tag)
+        public async Task EditTagAsync(Tag tag)
         {
             var sp = "TAG_UPDATE_P";
 
-            return await _conn.ExecuteAsync(sp, tag, commandType:CommandType.StoredProcedure);
+            await _conn.ExecuteAsync(sp, tag, commandType:CommandType.StoredProcedure);
         }
 
-        public async Task<Tag> GetTagById(int tagId)
+        public async Task<Tag> GetTagByIdAsync(int tagId)
         {
             var sp = "TAG_GET_BY_ID_P";
 
             return (await _conn.QueryFirstAsync<Tag>(sp, new {TagId = tagId}, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<IEnumerable<Tag>> GetTagsByTitle(string title)
+        public async Task<IEnumerable<Tag>> GetTagsByTitleAsync(string title)
         {
             var sp = "TAGS_FIND_P";
 

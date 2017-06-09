@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avnon.AddressBook.Api.Business.Interfaces;
 using Avnon.AddressBook.Api.Model;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Avnon.AddressBook.Api.Controllers
 {
+    [EnableCors("AllowAll")]
     [Route("api/[controller]")]
     public class TagController : Controller
     {
@@ -22,7 +24,7 @@ namespace Avnon.AddressBook.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string title)
         {
-            var result = await _tagService.GetTagsByTitle(title);
+            var result = await _tagService.GetTagsByTitleAsync(title ?? string.Empty);
 
             return Ok(result);
         }
@@ -31,7 +33,7 @@ namespace Avnon.AddressBook.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _tagService.GetTagById(id);
+            var result = await _tagService.GetTagByIdAsync(id);
 
             return Ok(result);
         }
@@ -40,16 +42,16 @@ namespace Avnon.AddressBook.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Tag tag)
         {
-            await _tagService.EditTag(tag);
+            await _tagService.EditTagAsync(tag);
 
             return Ok();
         }
 
         // PUT api/tag
-        [HttpPut()]
+        [HttpPut]
         public async Task<IActionResult> Put([FromBody]Tag tag)
         {
-            var result = await _tagService.AddTag(tag);
+            var result = await _tagService.AddTagAsync(tag.Title);
 
             return Ok(result);
         }
@@ -58,7 +60,7 @@ namespace Avnon.AddressBook.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _tagService.DeleteTag(id);
+            await _tagService.DeleteTagAsync(id);
 
             return Ok();
         }
