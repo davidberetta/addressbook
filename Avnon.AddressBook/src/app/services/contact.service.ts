@@ -4,13 +4,14 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import { Contact } from "../model/contact";
 import { Tag } from "../model/tag";
+import { ConfigService } from "config/config.service";
 
 @Injectable()
 export class ContactService {
 
-  private contactUrl = 'http://localhost:50797/api/contact';
+  private contactUrl = this.configService.get('apiUrl') + 'contact/';
 
-  constructor(private http:Http) { }
+  constructor(private http: Http, private configService: ConfigService) { }
 
   getAllContacts(): Promise<Contact[]> {
     return this.http.get(this.contactUrl)
@@ -35,7 +36,7 @@ export class ContactService {
   }
 
   getContactsByTag(tagId: number): Promise<Contact[]> {
-    return this.http.get(this.contactUrl + '/tag/' + tagId)
+    return this.http.get(this.contactUrl + 'tag/' + tagId)
       .toPromise()
       .then(res => {
         var result = res.json() as Contact[];
@@ -46,7 +47,7 @@ export class ContactService {
   }
 
  getContact(id: number): Promise<Contact> {
-    return this.http.get(this.contactUrl + '/' + id)
+    return this.http.get(this.contactUrl + id)
       .toPromise()
       .then(res => {
         var result = res.json() as Contact;
@@ -57,7 +58,7 @@ export class ContactService {
   }
 
   addTagToContact(contactId: number, tag: Tag): Promise<Tag> {
-    return this.http.put(this.contactUrl + '/' + contactId + '/tag/', tag)
+    return this.http.put(this.contactUrl + contactId + '/tag/', tag)
       .toPromise()
       .then(res => {
         var result = res.json() as Tag;

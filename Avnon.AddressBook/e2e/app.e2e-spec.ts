@@ -1,15 +1,14 @@
-import { browser, element, by } from 'protractor';
+import { AvnonAddressBookPage } from './app.po';
 
-describe('QuickStart E2E Tests', function () {
+describe('avnon-address-book App', () => {
+  let page: AvnonAddressBookPage;
 
-  let expectedMsg = 'Hello Angular';
-
-  beforeEach(function () {
-    browser.get('');
+  beforeEach(() => {
+    page = new AvnonAddressBookPage();
   });
 
-  it('should display: ' + expectedMsg, function () {
-    expect(element(by.css('h1')).getText()).toEqual(expectedMsg);
+  it('should display welcome message', () => {
+    page.navigateTo();
+    expect(page.getParagraphText()).toEqual('Welcome to app!!');
   });
-
 });

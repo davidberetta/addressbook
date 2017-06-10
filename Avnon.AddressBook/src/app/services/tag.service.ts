@@ -3,13 +3,14 @@ import { Headers, Http } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 import { Tag } from "../model/tag";
+import { ConfigService } from "config/config.service";
 
 @Injectable()
 export class TagService {
 
-  private tagUrl = 'http://localhost:50797/api/tag';
+  private tagUrl = this.configService.get('apiUrl') + 'tag/';
 
-  constructor(private http: Http) { }
+  constructor(private http: Http, private configService:ConfigService) { }
 
   getAllTags(): Promise<Tag[]> {
     return this.http.get(this.tagUrl)
@@ -48,7 +49,7 @@ export class TagService {
   }
 
   deleteTag(id: number) {
-    return this.http.delete(this.tagUrl+'/'+id)
+    return this.http.delete(this.tagUrl + id)
       .toPromise()
       .catch(this.handleError);
   }
