@@ -8,8 +8,7 @@
       "root": "src",
       "outDir": "wwwroot",
       "assets": [
-        "assets",
-        "config/config.json"
+        "assets"
       ],
       "index": "index.html",
       "main": "main.ts",

@@ -3,8 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-    <PreBuildEvent>ng build</PreBuildEvent>
-    <PostBuildEvent></PostBuildEvent>
+  </PropertyGroup>
+
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+
+  <PropertyGroup>
+    <PreBuildEvent>if $(ConfigurationName) == Release (ng build --env=prod) else (ng build)</PreBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release (copy $(ProjectDir)src\config\config.prod.json $(ProjectDir)wwwroot\config.json) else (copy $(ProjectDir)src\config\config.json $(ProjectDir)wwwroot\config.json)</PostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>

@@ -15,7 +15,8 @@ div.page-header {
 }
 
 .label {
-  margin-left: 3px;
+  margin: 1.5px;
+  float: left;
   padding: .4em .6em .4em .6em !important;
 }
 
