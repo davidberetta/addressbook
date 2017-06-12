@@ -10,7 +10,7 @@ export class ConfigService {
 
   load() {
     return new Promise((resolve) => {
-      this.http.get('config/config.json').toPromise()
+      this.http.get('appConfig.json').toPromise()
         .then(config => {
           this._config = config.json();
           resolve();

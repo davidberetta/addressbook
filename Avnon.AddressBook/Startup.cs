@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using Avnon.AddressBook.Extensions;
 
 namespace Avnon.AddressBook
 {
@@ -23,13 +20,18 @@ namespace Avnon.AddressBook
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
     {
       loggerFactory.AddConsole();
+      loggerFactory.AddAzureWebAppDiagnostics();
+
+      //var logger = loggerFactory.CreateLogger<Startup>();
+
 
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
       }
 
-      app.Use(async (context, next) => {
+      app.Use(async (context, next) =>
+      {
         await next();
         if (context.Response.StatusCode == 404 &&
             !Path.HasExtension(context.Request.Path.Value))
@@ -37,6 +39,7 @@ namespace Avnon.AddressBook
           context.Request.Path = "/index.html";
           await next();
         }
+
       });
 
       app.UseDefaultFiles();
