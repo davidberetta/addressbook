@@ -4,11 +4,12 @@ using Avnon.AddressBook.Api.Business.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Avnon.AddressBook.Api.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Avnon.AddressBook.Api.Controllers
 {
-    [EnableCors("AllowAll")]
     [Route("api/[controller]")]
+    [Authorize]
     public class ContactController : Controller
     {
         private readonly IContactService _contactService;
@@ -19,7 +20,7 @@ namespace Avnon.AddressBook.Api.Controllers
         }
 
         // GET api/contact/dav
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> FindContactsAsync([FromQuery] string searchText)
         {
             var contacts = (await _contactService.FindContactsAsync(searchText ?? string.Empty)).ToList();

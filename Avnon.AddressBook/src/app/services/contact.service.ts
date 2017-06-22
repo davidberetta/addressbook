@@ -1,6 +1,6 @@
 ﻿import {Injectable} from '@angular/core';
-import { Headers, Http } from '@angular/http';
-
+import { Headers } from '@angular/http';
+import { AuthHttp } from 'angular2-jwt';
 import 'rxjs/add/operator/toPromise';
 import { Contact } from "../model/contact";
 import { Tag } from "../model/tag";
@@ -9,12 +9,12 @@ import { ConfigService } from "config/config.service";
 @Injectable()
 export class ContactService {
 
-  private contactUrl = this.configService.get('apiUrl') + 'contact/';
+  private contactUrl = this.configService.get('apiUrl') + '/contact';
 
-  constructor(private http: Http, private configService: ConfigService) { }
+  constructor(public authHttp: AuthHttp, private configService: ConfigService) { }
 
   getAllContacts(): Promise<Contact[]> {
-    return this.http.get(this.contactUrl)
+    return this.authHttp.get(this.contactUrl)
       .toPromise()
       .then(res => {
         var result = res.json() as Contact[];
@@ -25,7 +25,7 @@ export class ContactService {
   }
 
   findContacts(searchText: string): Promise<Contact[]> {
-    return this.http.get(this.contactUrl+'?searchText='+searchText)
+    return this.authHttp.get(this.contactUrl+'?searchText='+searchText)
       .toPromise()
       .then(res => {
         var result = res.json() as Contact[];
@@ -36,7 +36,7 @@ export class ContactService {
   }
 
   getContactsByTag(tagId: number): Promise<Contact[]> {
-    return this.http.get(this.contactUrl + 'tag/' + tagId)
+    return this.authHttp.get(this.contactUrl + '/tag/' + tagId)
       .toPromise()
       .then(res => {
         var result = res.json() as Contact[];
@@ -47,7 +47,7 @@ export class ContactService {
   }
 
  getContact(id: number): Promise<Contact> {
-    return this.http.get(this.contactUrl + id)
+   return this.authHttp.get(this.contactUrl + '/' + id)
       .toPromise()
       .then(res => {
         var result = res.json() as Contact;
@@ -58,7 +58,7 @@ export class ContactService {
   }
 
   addTagToContact(contactId: number, tag: Tag): Promise<Tag> {
-    return this.http.put(this.contactUrl + contactId + '/tag/', tag)
+    return this.authHttp.put(this.contactUrl + '/' + contactId + '/tag/', tag)
       .toPromise()
       .then(res => {
         var result = res.json() as Tag;
@@ -68,7 +68,7 @@ export class ContactService {
  }
 
   removeTagFromContact(contactId: number, tagId: number) {
-    return this.http.delete(this.contactUrl + '/' + contactId + '/tag/' + tagId)
+    return this.authHttp.delete(this.contactUrl + '/' + contactId + '/tag/' + tagId)
       .toPromise()
       .catch(this.handleError);
   }

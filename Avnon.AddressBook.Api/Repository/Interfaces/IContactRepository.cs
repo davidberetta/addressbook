@@ -16,6 +16,6 @@ namespace Avnon.AddressBook.Api.Repository.Interfaces
         Task<int> AddTagToContactAsync(int contactId, Tag tag);
 
         Task RemoveTagFromContactAsync(int contactId, int tagId);
-        
+
     }
 }

@@ -10,7 +10,10 @@
 
   <PropertyGroup>
     <PreBuildEvent>if $(ConfigurationName) == Release (ng build --env=prod) else (ng build)</PreBuildEvent>
-    <PostBuildEvent>if $(ConfigurationName) == Release (copy $(ProjectDir)src\config\appConfig.prod.json $(ProjectDir)wwwroot\appConfig.json) else (copy $(ProjectDir)src\config\appConfig.json $(ProjectDir)wwwroot\appConfig.json)</PostBuildEvent>
+    <PostBuildEvent>
+      if $(ConfigurationName) == Release (copy $(ProjectDir)src\config\appConfig.prod.json $(ProjectDir)wwwroot\appConfig.json)
+      if $(ConfigurationName) == Debug (copy $(ProjectDir)src\config\appConfig.json $(ProjectDir)wwwroot\appConfig.json)
+    </PostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +31,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="2.0.0-preview1-final" />
   </ItemGroup>

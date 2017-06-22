@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avnon.AddressBook.Api.Business.Interfaces;
 using Avnon.AddressBook.Api.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Avnon.AddressBook.Api.Controllers
 {
-    [EnableCors("AllowAll")]
     [Route("api/[controller]")]
+    [Authorize]
     public class TagController : Controller
     {
         private readonly ITagService _tagService;

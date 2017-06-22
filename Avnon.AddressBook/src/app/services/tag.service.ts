@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
-
+import { Headers } from '@angular/http';
+import { AuthHttp } from 'angular2-jwt';
 import 'rxjs/add/operator/toPromise';
 import { Tag } from "../model/tag";
 import { ConfigService } from "config/config.service";
@@ -8,12 +8,12 @@ import { ConfigService } from "config/config.service";
 @Injectable()
 export class TagService {
 
-  private tagUrl = this.configService.get('apiUrl') + 'tag/';
+  private tagUrl = this.configService.get('apiUrl') + '/tag';
 
-  constructor(private http: Http, private configService:ConfigService) { }
+  constructor(public authHttp: AuthHttp, private configService:ConfigService) { }
 
   getAllTags(): Promise<Tag[]> {
-    return this.http.get(this.tagUrl)
+    return this.authHttp.get(this.tagUrl)
       .toPromise()
       .then(res => {
         var result = res.json() as Tag[];
@@ -23,7 +23,7 @@ export class TagService {
   }
 
   findTags(searchText: string): Promise<Tag[]> {
-    return this.http.get(this.tagUrl + '?title=' + searchText)
+    return this.authHttp.get(this.tagUrl + '?title=' + searchText)
       .toPromise()
       .then(res => {
         var result = res.json() as Tag[];
@@ -33,7 +33,7 @@ export class TagService {
   }
 
   addTag(tag: Tag): Promise<Tag> {
-    return this.http.put(this.tagUrl,tag)
+    return this.authHttp.put(this.tagUrl,tag)
       .toPromise()
       .then(res => {
         var result = res.json() as Tag;
@@ -43,13 +43,13 @@ export class TagService {
   }
 
   editTag(tag: Tag) {
-    return this.http.post(this.tagUrl, tag)
+    return this.authHttp.post(this.tagUrl, tag)
       .toPromise()
       .catch(this.handleError);
   }
 
   deleteTag(id: number) {
-    return this.http.delete(this.tagUrl + id)
+    return this.authHttp.delete(this.tagUrl + '/' + id)
       .toPromise()
       .catch(this.handleError);
   }
