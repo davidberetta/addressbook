@@ -21,11 +21,28 @@
 }
 
 #login-facebook {
-  width: 100%
+  width: 100%;
+}
+
+#login-info {
+  margin-top: 30px;
+}
+
+#notifications {
+  margin-top: -50px;
+}
+
+#notifications-list.dropdown-menu {
+  overflow-y: auto;
+  max-height: 200px;
+  min-width: 300px;
+  display: block !important;
+  left: inherit !important;
+  margin-top: -4px;
 }
 
 #search-bar {
-  padding-top: 7px;
+  margin: 8px 135px 8px 0px;
 }
 
 .panel-info {

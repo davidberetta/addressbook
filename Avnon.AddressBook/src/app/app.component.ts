@@ -1,8 +1,6 @@
 ﻿import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { UserManager } from 'oidc-client';
-
 @Component({
   moduleId: module.id,
   selector: 'my-app',

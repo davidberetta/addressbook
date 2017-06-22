@@ -72,6 +72,7 @@ namespace Avnon.AddressBook.Api.Controllers
 
             if (result.Succeeded)
             {
+                response.Username = userDto.Username;
                 response.Token = GenerateAccessToken(userDto.Username, 600);
 
                 return Ok(response);
@@ -142,6 +143,7 @@ namespace Avnon.AddressBook.Api.Controllers
 
             await _signinManager.SignInAsync(user, false, "Facebook");
 
+            result.Username = fbContent["name"].Value<string>(); ;
             result.Token = GenerateAccessToken(user.UserName, 600);
 
             return Ok(result);
@@ -203,7 +205,7 @@ namespace Avnon.AddressBook.Api.Controllers
             {
                 Errors = new List<string>();
             }
-
+            public string Username { get; set; }
             public string Token { get; set; }
             public IList<string> Errors { get; set; }
         }

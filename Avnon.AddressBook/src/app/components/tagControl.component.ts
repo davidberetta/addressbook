@@ -2,6 +2,7 @@
 import { ContactService } from '../services/contact.service';
 import { TagService } from '../services/tag.service';
 import { Tag } from "../model/tag";
+import { PubNubAngular } from 'pubnub-angular2';
 
 @Component({
   moduleId: module.id,
@@ -22,7 +23,7 @@ export class TagControlComponent {
   tagsLoaded: boolean = false;
   showDropDown: boolean = false;
 
-  constructor(private contactService: ContactService, private tagService: TagService, private _eref: ElementRef) { }
+  constructor(private contactService: ContactService, private tagService: TagService, private _eref: ElementRef, private pubNub: PubNubAngular) { }
 
   onClick(event: Event) {
     if ((event.target as Element).id.startsWith("tagops_"))
@@ -75,6 +76,11 @@ export class TagControlComponent {
       tag.selected = true;
       this.tags.push(tag);
       this.onTagAdded.emit(tag);
+
+      this.pubNub.publish({ channel: 'newTagChannel', message: 'New Tag: '+title }, response => {
+        console.log(response);
+      });
+
     });
   }
 

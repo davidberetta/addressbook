@@ -1,4 +1,4 @@
-﻿import { tokenNotExpired } from 'angular2-jwt';
+﻿import { tokenNotExpired, AuthHttp } from 'angular2-jwt';
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
 import { User } from '../model/user';
@@ -13,7 +13,7 @@ export class AuthService {
 
   private accountUrl = this.config.get('apiUrl') + '/account';
 
-  constructor(private http: Http, private config: ConfigService, private fb: FacebookService) {
+  constructor(private http: Http, private authHttp: AuthHttp, private config: ConfigService, private fb: FacebookService) {
     let fbParams: InitParams = {
       appId: this.config.get('appId'),
       version: 'v2.6',
@@ -31,6 +31,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.config.get('tokenName'));
+    localStorage.removeItem('currentUser');
     this.fb.logout();
   }
 
@@ -64,6 +65,11 @@ export class AuthService {
 
   }
 
+  getCurrentUser():string {
+    var res = localStorage.getItem('currentUser');
+    return res;
+  }
+
   login(user: User): Promise<ResponseDto> {
     return this.http.post(this.accountUrl + '/login', user).toPromise().then(response => {
       var data = response.json();
@@ -87,15 +93,13 @@ export class AuthService {
         var token = responseData.token;
 
         if (token) {
-          this.saveToken(token);
+          localStorage.setItem(this.config.get('tokenName'), token);
+          localStorage.setItem('currentUser', responseData.username);
+
           result.success = true;
         }
       }
     }
     return result;
-  }
-
-  private saveToken(token: string) {
-    localStorage.setItem(this.config.get('tokenName'), token);
   }
 }

@@ -1,19 +1,31 @@
 ﻿<div class="page-header">
   <div class="container">
-    <h1>
+    <h1 class="pull-left">
       AVNON <small>Address Book</small>
     </h1>
+    <div id="login-info" class="pull-right">
+      Logged in as <strong>{{currentUser}}</strong> | <a style="cursor: pointer" (click)="logout()">Logout</a>
+    </div>
   </div>
 </div>
 
 <div class="navbar navbar-default">
-  <div class="container container-fluid">
+  <div class="container">
     <search-bar (onSearch)="onSearch($event)" (onSearchByTag)="onSearchByTag($event)"></search-bar>
-    <button (click)="logout()">Logout</button>
+    <div id="notifications" class="pull-right">
+      <button (click)="(showNotifications = !showNotifications)" id="notifications-button" class="btn btn-info navbar-btn" type="button">
+        Notifications <span class="badge">{{notifications.length}}</span>
+      </button>
+      <ul *ngIf="(showNotifications && notifications.length > 0)" id="notifications-list" class="dropdown-menu">
+        <li *ngFor="let notification of notifications">
+          <a style="cursor: pointer" (click)="removeNotification(notification)">{{notification}}</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<div class="container container-fluid">
+<div class="container">
   <div class="row">
     <div class="col-md-5 col-md-push-7 col-sm-6 col-sm-push-6">
       <router-outlet></router-outlet>
