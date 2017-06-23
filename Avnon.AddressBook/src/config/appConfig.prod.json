@@ -1,7 +1,5 @@
 ﻿{
   "apiUrl": "http://avnonaddressbookapi.azurewebsites.net/api",
   "tokenName": "avnon-access-token",
-  "appId": "302870123495219",
-  "pn_pubKey": "pub-c-12db7170-662c-4b19-8d07-7de772ddd1f4",
-  "pn_subKey": "sub-c-c9c6524c-5754-11e7-a698-0619f8945a4f"
+  "appId": "302870123495219"
 }

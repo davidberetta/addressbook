@@ -1,9 +1,6 @@
 # Autosave files
 *~
 
-# Local Dev Files
-*/*.Development.json
-
 # node
 node_modules/
 

@@ -8,17 +8,25 @@ namespace Avnon.AddressBook.Api
     public partial class Startup
     {
         private void ConfigureAuth(IApplicationBuilder app)
-        {           
-			var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("TokenAuthentication:SecretKey").Value));
+        {
+            //Deny x-frame requests
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                await next();
+            });
+
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["TokenAuthentication:SecretKey"]));
 
 			var tokenValidationParameters = new TokenValidationParameters
 			{
 				ValidateIssuerSigningKey = true,
 				IssuerSigningKey = signingKey,
 				ValidateIssuer = true,
-				ValidIssuer = Configuration.GetSection("TokenAuthentication:Issuer").Value,
+				ValidIssuer = Configuration["TokenAuthentication:Issuer"],
 				ValidateAudience = true,
-				ValidAudience = Configuration.GetSection("TokenAuthentication:Audience").Value,
+				ValidAudience = Configuration["TokenAuthentication:Audience"],
 				ValidateLifetime = true,
 				ClockSkew = TimeSpan.Zero
 			};

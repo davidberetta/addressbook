@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using Avnon.AddressBook.Api.Business;
 using Avnon.AddressBook.Api.Business.Interfaces;
@@ -24,6 +25,12 @@ namespace Avnon.AddressBook.Api
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
             Configuration = builder.Build();
         }
 
@@ -37,7 +44,11 @@ namespace Avnon.AddressBook.Api
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", a => a.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+                options.AddPolicy("Default",
+                    a => a.WithOrigins(GetCorsValues("AllowedOrigins"))
+                        .WithHeaders(GetCorsValues("AllowedHeaders",true))
+                        .WithMethods(GetCorsValues("AllowedMethods",true))
+                );
             });
 
             services.AddSingleton<IDbConnection>(new SqlConnection(Configuration.GetConnectionString("Avnon")));
@@ -69,13 +80,20 @@ namespace Avnon.AddressBook.Api
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseCors("AllowAll");
-
+            app.UseCors("Default");
             app.UseIdentity();
-
             ConfigureAuth(app);
-    
             app.UseMvc();
+        }
+
+        private string[] GetCorsValues(string key, bool defaultAll = false)
+        {
+            var corsValue = Configuration[$"Cors:{key}"];
+
+            if (string.IsNullOrWhiteSpace(corsValue))
+                return defaultAll ? new[] { "*" } : new[] { "" };
+
+            return corsValue.Replace(" ", "").Split(',');
         }
     }
 }

@@ -27,11 +27,11 @@ namespace Avnon.AddressBook.Api.Controllers
     {
         private readonly SignInManager<User> _signinManager;
         private readonly UserManager<User> _userManager;
-        private readonly IConfiguration _config;
+        private readonly IConfiguration Configuration;
 
         public AccountController(IConfiguration config, SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            _config = config;
+            Configuration = config;
             _signinManager = signInManager;
             _userManager = userManager;
         }
@@ -72,9 +72,7 @@ namespace Avnon.AddressBook.Api.Controllers
 
             if (result.Succeeded)
             {
-                response.Username = userDto.Username;
                 response.Token = GenerateAccessToken(userDto.Username, 600);
-
                 return Ok(response);
             }
 
@@ -89,8 +87,8 @@ namespace Avnon.AddressBook.Api.Controllers
         {
             var facebookOptions = new FacebookOptions()
             {
-                AppId = _config.GetSection("Facebook:AppId").Value,
-                AppSecret = _config.GetSection("Facebook:AppSecret").Value,
+                AppId = Configuration["Facebook:AppId"],
+                AppSecret = Configuration["Facebook:AppSecret"],
                 Scope = { "email", "public_profile" },
             };
 
@@ -143,7 +141,7 @@ namespace Avnon.AddressBook.Api.Controllers
 
             await _signinManager.SignInAsync(user, false, "Facebook");
 
-            result.Username = fbContent["name"].Value<string>(); ;
+            //result.Username = fbContent["name"].Value<string>(); ;
             result.Token = GenerateAccessToken(user.UserName, 600);
 
             return Ok(result);
@@ -165,7 +163,7 @@ namespace Avnon.AddressBook.Api.Controllers
 
         private string GenerateAccessToken(string username, int lifetime)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("TokenAuthentication:SecretKey").Value));
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["TokenAuthentication:SecretKey"]));
 
             var handler = new JwtSecurityTokenHandler();
             var requestAt = DateTime.Now;
@@ -175,18 +173,20 @@ namespace Avnon.AddressBook.Api.Controllers
                 new GenericIdentity(username, "access_token"),
                 new[]
                 {
-                    new Claim("Username", username),
+                    new Claim("username", username),
+                    new Claim("pn_pub_key", Configuration["PubNub:PublishKey"]),
+                    new Claim("pn_sub_key", Configuration["PubNub:SubscribeKey"]),
                 }
             );
 
             var token = handler.CreateToken(new SecurityTokenDescriptor()
             {
-                Issuer = _config.GetSection("TokenAuthentication:Issuer").Value,
-                Audience = _config.GetSection("TokenAuthentication:Audience").Value,
+                Issuer = Configuration["TokenAuthentication:Issuer"],
+                Audience = Configuration["TokenAuthentication:Audience"],
                 SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
                 Subject = identity,
                 Expires = expiresAt,
-                NotBefore = requestAt
+                NotBefore = requestAt,
             });
 
             return handler.WriteToken(token);
@@ -205,7 +205,6 @@ namespace Avnon.AddressBook.Api.Controllers
             {
                 Errors = new List<string>();
             }
-            public string Username { get; set; }
             public string Token { get; set; }
             public IList<string> Errors { get; set; }
         }

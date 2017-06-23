@@ -2,7 +2,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, Http, RequestOptions } from '@angular/http';
-import { AuthHttpServiceFactory, PubNubServiceFactory } from './app.helper';
+import { AuthHttpServiceFactory } from './app.helper';
 import { AuthService } from './services/auth.service';
 import { AuthGuard } from './services/auth-guard.service';
 import { AppComponent }  from './app.component';
@@ -14,7 +14,7 @@ import { SearchBarComponent } from './components/searchBar.component';
 import { TagControlComponent } from './components/tagControl.component';
 import { routing } from "./app.router";
 import { ConfigService, ConfigLoader } from "config/config.service";
-import { AuthHttp } from "angular2-jwt/angular2-jwt";
+import { AuthHttp, JwtHelper } from "angular2-jwt/angular2-jwt";
 import { FacebookService } from "ngx-facebook";
 import { PubNubAngular } from 'pubnub-angular2';
 
@@ -32,11 +32,8 @@ import { PubNubAngular } from 'pubnub-angular2';
       useFactory: AuthHttpServiceFactory,
       deps: [Http, RequestOptions, ConfigService],
     },
-    {
-      provide: PubNubAngular,
-      useFactory: PubNubServiceFactory,
-      deps: [ConfigService]
-    },
+    PubNubAngular,
+    JwtHelper,
     FacebookService,
     AuthGuard,
     AuthService
