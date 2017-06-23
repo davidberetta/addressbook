@@ -174,8 +174,8 @@ namespace Avnon.AddressBook.Api.Controllers
                 new[]
                 {
                     new Claim("username", username),
-                    new Claim("pn_pub_key", Configuration["PubNub:PublishKey"]),
-                    new Claim("pn_sub_key", Configuration["PubNub:SubscribeKey"]),
+                    new Claim("pn_pub_key", Configuration["PubNub:PublishKey"] ?? string.Empty),
+                    new Claim("pn_sub_key", Configuration["PubNub:SubscribeKey"] ?? string.Empty),
                 }
             );
 

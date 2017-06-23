@@ -27,6 +27,8 @@ export class HomeComponent implements OnInit {
 
     this.notifications = [];
     this.showNotifications = false;
+
+    this.authService.initializePubNub();
   }
 
   ngOnInit(): void {

@@ -70,7 +70,7 @@ export class AuthService {
   }
 
   getCurrentUser(): string {
-    var username = this.getJwtClaim('username') as string;
+    var username = this.getJwtClaim('username');
     if (!username)
       return 'Anonymous';
     return username;
@@ -83,18 +83,17 @@ export class AuthService {
     }).catch(e => { console.log(e) });
   }
 
-  getJwtClaim(claim: string): Object {
+  getJwtClaim(claim: string): string {
     var token = localStorage.getItem(this.config.get('tokenName'));
     var decodedToken = this.jwt.decodeToken(token);
     var result = decodedToken[claim];
     return result;
   }
 
-  private initializePubNub(token: string) {
-    var decodedToken = this.jwt.decodeToken(token);
+  initializePubNub() {
     this.pubnub.init({
-      publishKey: decodedToken.pn_pub_key || '',
-      subscribeKey: decodedToken.pn_sub_key || ''
+      publishKey: this.getJwtClaim('pn_pub_key') || '',
+      subscribeKey: this.getJwtClaim('pn_sub_key') || ''
     });
   }
 
@@ -115,7 +114,6 @@ export class AuthService {
 
         if (token) {
           localStorage.setItem(this.config.get('tokenName'), token);
-          this.initializePubNub(token);
           result.success = true;
         }
       }
