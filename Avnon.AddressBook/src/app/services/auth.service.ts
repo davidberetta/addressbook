@@ -5,7 +5,6 @@ import { User } from '../model/user';
 import { ResponseDto } from '../model/responseDto';
 import 'rxjs/add/operator/toPromise';
 import { ConfigService } from 'config/config.service';
-import { FacebookService, InitParams, LoginOptions, LoginResponse } from 'ngx-facebook';
 import { PubNubAngular } from 'pubnub-angular2';
 
 @Injectable()
@@ -16,19 +15,9 @@ export class AuthService {
   constructor(private http: Http,
     private authHttp: AuthHttp,
     private config: ConfigService,
-    private fb: FacebookService,
     private jwt: JwtHelper,
     private pubnub: PubNubAngular
-  ) {
-    let fbParams: InitParams = {
-      appId: this.config.get('appId'),
-      version: 'v2.6',
-      cookie: true,
-      xfbml: true,
-    };
-
-    this.fb.init(fbParams);
-  }
+  ) { }
 
   loggedIn() {
     return tokenNotExpired(this.config.get('tokenName'));
@@ -36,41 +25,33 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.config.get('tokenName'));
-    localStorage.removeItem('currentUser');
-    this.fb.logout();
   }
 
-  loginFacebook(): Promise<ResponseDto> {
+  fbDialogAuth() {
+    var dialogUri = 'https://www.facebook.com/v2.9/dialog/oauth?client_id=' +
+      this.config.get('fbAppId') +
+      '&redirect_uri=' +
+      this.config.get('fbRedirectUri')
+      '&response_type=code';
 
-    let loginOptions: LoginOptions = {
-      scope: 'email,public_profile',
-    };
+    window.location.href = dialogUri;
+  }
 
-    return this.fb.login(loginOptions).then(response => {
+  fbLogin(authCode:string): Promise<ResponseDto> {
+    var q = this.accountUrl +
+      '/loginFacebook?authCode=' +
+      authCode +
+      '&redirectUri=' +
+      this.config.get('fbRedirectUri');
 
-      if (response.status == 'connected') {
-
-        var q = this.accountUrl +
-          '/loginFacebook?providerKey=' +
-          response.authResponse.userID +
-          '&accessToken=' +
-          response.authResponse.accessToken;
-
-        return this.http.get(q).toPromise().then(response => {
-          var data = response.json();
-          return this.handleLoginResponse(data);
-        });
-      }
-      return {
-        success: false,
-        errors: ['Facebook Authentication Failed'],
-        data: {}
-      };
+    return this.http.get(q).toPromise().then(response => {
+      var data = response.json();
+      return this.handleLoginResponse(data);
     });
   }
 
   getCurrentUser(): string {
-    var username = this.getJwtClaim('username');
+    var username = this.getJwtClaim('name');
     if (!username)
       return 'Anonymous';
     return username;

@@ -22,6 +22,7 @@ const appRoutes: Routes = [
   },
   { path: 'token-auth', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'loginExternal/:provider', component: LoginComponent },
 ];
 
 export const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes);

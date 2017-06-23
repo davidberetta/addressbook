@@ -1,5 +1,6 @@
 ﻿{
   "apiUrl": "http://localhost:5000/api",
   "tokenName": "avnon-access-token",
-  "appId": "302870123495219"
+  "fbAppId": "302870123495219",
+  "fbRedirectUri": "http://localhost:3000/loginExternal/facebook"
 }

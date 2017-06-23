@@ -72,7 +72,8 @@ namespace Avnon.AddressBook.Api.Controllers
 
             if (result.Succeeded)
             {
-                response.Token = GenerateAccessToken(userDto.Username, 600);
+                var user = await _userManager.FindByNameAsync(userDto.Username);
+                response.Token = GenerateAccessToken(user, 600);
                 return Ok(response);
             }
 
@@ -83,7 +84,7 @@ namespace Avnon.AddressBook.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("LoginFacebook")]
-        public async Task<IActionResult> LoginFacebookAsync(string providerKey, string accessToken)
+        public async Task<IActionResult> LoginFacebookAsync(string authCode, string redirectUri)
         {
             var facebookOptions = new FacebookOptions()
             {
@@ -93,6 +94,14 @@ namespace Avnon.AddressBook.Api.Controllers
             };
 
             var result = new ResponseDto();
+
+            var accessToken = await GetFacebookAccessToken(facebookOptions, authCode, redirectUri);
+
+            if (accessToken == null)
+            {
+                result.Errors.Add("Facebook Authentication Failed");
+                return Ok(result);
+            }
 
             var queryStrings = new Dictionary<string, string>()
             {
@@ -113,11 +122,26 @@ namespace Avnon.AddressBook.Api.Controllers
 
             var fbContent = JObject.Parse(await fbResponse.Content.ReadAsStringAsync());
 
+            var providerKey = fbContent["id"]?.Value<string>();
+
+            if (providerKey == null)
+            {
+                result.Errors.Add("Facebook Authentication Failed");
+                return Ok(result);
+            }
+
             var user = await _userManager.FindByLoginAsync("Facebook", providerKey);
 
             if (user == null)
             {
-                var userEmail = fbContent["email"].Value<string>();
+                var userEmail = fbContent["email"]?.Value<string>();
+
+                if (userEmail == null)
+                {
+                    result.Errors.Add("Facebook Authentication Failed");
+                    return Ok(result);
+                }
+
                 //Find user by email
                 user = await _userManager.FindByEmailAsync(userEmail);
 
@@ -129,10 +153,11 @@ namespace Avnon.AddressBook.Api.Controllers
                         UserId = Guid.NewGuid().ToString(),
                         Email = userEmail,
                         UserName = userEmail,
+                        FirstName = fbContent["first_name"]?.Value<string>() ?? "",
+                        LastName = fbContent["last_name"]?.Value<string>() ?? ""
                     };
 
                     await _userManager.CreateAsync(user);
-
                 }
 
                 //Link Facebook to account
@@ -141,10 +166,33 @@ namespace Avnon.AddressBook.Api.Controllers
 
             await _signinManager.SignInAsync(user, false, "Facebook");
 
-            //result.Username = fbContent["name"].Value<string>(); ;
-            result.Token = GenerateAccessToken(user.UserName, 600);
+            result.Token = GenerateAccessToken(user, 600);
 
             return Ok(result);
+        }
+
+        private async Task<string> GetFacebookAccessToken(FacebookOptions facebookOptions, string authCode, string redirectUri)
+        {
+            var queryStrings = new Dictionary<string, string>()
+            {
+                {"client_id", facebookOptions.AppId},
+                {"redirect_uri", redirectUri},
+                {"client_secret", facebookOptions.AppSecret},
+                {"code", authCode},
+            };
+
+            var endpoint = QueryHelpers.AddQueryString(facebookOptions.TokenEndpoint, queryStrings);
+
+            var fbResponse = await (new HttpClient().GetAsync(endpoint));
+
+            if (!fbResponse.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var fbContent = JObject.Parse(await fbResponse.Content.ReadAsStringAsync());
+
+            return fbContent["access_token"].Value<string>();
         }
 
         private string GenerateAppSecretProof(string accessToken, string appSecret)
@@ -161,7 +209,7 @@ namespace Avnon.AddressBook.Api.Controllers
             }
         }
 
-        private string GenerateAccessToken(string username, int lifetime)
+        private string GenerateAccessToken(User user, int lifetime)
         {
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["TokenAuthentication:SecretKey"]));
 
@@ -170,10 +218,14 @@ namespace Avnon.AddressBook.Api.Controllers
             var expiresAt = requestAt.AddSeconds(lifetime);
 
             var identity = new ClaimsIdentity(
-                new GenericIdentity(username, "access_token"),
+                new GenericIdentity(user.UserId, "access_token"),
                 new[]
                 {
-                    new Claim("username", username),
+                    new Claim("username", user.UserName),
+                    new Claim("email", user.Email),
+                    new Claim("first_name", user.FirstName),
+                    new Claim("last_name", user.LastName),
+                    new Claim("name", $"{user.FirstName} {user.LastName}"),
                     new Claim("pn_pub_key", Configuration["PubNub:PublishKey"] ?? string.Empty),
                     new Claim("pn_sub_key", Configuration["PubNub:SubscribeKey"] ?? string.Empty),
                 }
@@ -210,6 +262,3 @@ namespace Avnon.AddressBook.Api.Controllers
         }
     }
 }
-
-
-

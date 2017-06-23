@@ -15,7 +15,6 @@ import { TagControlComponent } from './components/tagControl.component';
 import { routing } from "./app.router";
 import { ConfigService, ConfigLoader } from "config/config.service";
 import { AuthHttp, JwtHelper } from "angular2-jwt/angular2-jwt";
-import { FacebookService } from "ngx-facebook";
 import { PubNubAngular } from 'pubnub-angular2';
 
 @NgModule({
@@ -34,7 +33,6 @@ import { PubNubAngular } from 'pubnub-angular2';
     },
     PubNubAngular,
     JwtHelper,
-    FacebookService,
     AuthGuard,
     AuthService
   ],

@@ -1,5 +1,6 @@
 ﻿{
   "apiUrl": "http://avnonaddressbookapi.azurewebsites.net/api",
   "tokenName": "avnon-access-token",
-  "appId": "302870123495219"
+  "fbAppId": "302870123495219",
+  "fbRedirectUri": "http://avnonaddressbook.azurewebsites.net/loginExternal/facebook"
 }
